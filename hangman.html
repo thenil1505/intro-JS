@@ -4,7 +4,7 @@
     <title> Hangman</title>
     <meta charset="UTF-8">
 <style>
-    
+
     .innpakning {
         width: 600 px;
         margin: auto;
@@ -38,7 +38,159 @@
     </div>
 
 <script>
-    /*Her skal vi skrive JavaScript-koden */
+
+    var canvas = document.querySelector("#mittCanvas");
+    var ctx = canvas.getContext("2d");
+
+    //Henter inn tekstfeltet
+    var tekstfeltEl = document.querySelector("#bokstav");
+
+    //Hnter inn de tre p-elementene
+    var sjanserIgjenEl = document.querySelector("#sjanserIgjen");
+    var riktigeBokstaverEl = 
+        document.querySelector("#riktigeBokstaver");
+    var brukteBokstaverEl = 
+        document.querySelector("#brukteBokstaver");
+
+    //Henter inn knappen
+    var knappEl = document.querySelector("#knapp");
+    //Kobler en hendelse med knappen
+    knappEl.addEventListener("click", mottaBokstaver);
+
+    //Variabel som inneholder løsningsordet
+    var løsningsord = "LONDON";
+    //Array som inneholder alle brukte bokstaver
+    var brukteBokstaver = [];
+    //Array som inneholder alle riktige bokstaver
+    var riktigBokstaver = ["_", "_", "_", "_", "_", "_"];
+
+    //Variabel som inneholder antall sjanser spilleren skal få
+    var antallSjanser = 6;
+
+    //Tegner opp galgen
+    tegnGalge();
+
+    //Viser antall bokstaver i løsningsordet
+    riktigeBokstaverEl.innerHTML = "Riktige bokstaver: " +
+        riktigeBokstaver;
+
+    //Funksjon som kjører når knappen trykkes
+    function mottaBokstav() {
+        console.log("Du trykket på knappen.");
+    }
+
+    // Henter bokstaven i tekstfeltet
+    var gjettetBokstav = tekstfeltEl.value;
+    //Gjør bokstaven stor(upper case)
+    gjettetBokstav = gjettetBokstav.toUpperCase();
+
+    //Sjekker om bokstaven allerede er gjetter
+    //(indexOf returnerer -1 his bokstaven ikke er i arrayen)
+    if (brukteBokstaver.indexOf(gjettetBokstav)=== - 1) {
+        //Dytter bokstaven inn i brukte bokstaver
+        brukteBokstaver.push(gjettetBokstav);
+
+        //Sjekker om bokstaven er i kodeordet
+        if (løsningsord.indexOf(gjettetBokstav) === -1) {
+            //Ikke i kodeordet
+            antallSjanser -= 1;
+
+            //Tegn opp kroppsdel
+        } if (antallSjanser === 5) {
+            tegnHode ();
+        } else if (antallSjanser === 4) {
+            tegnKropp ();
+        } else if (antallSjanser === 3) {
+            tegnVenstrearm();
+        } else if (antallSjanser === 2) {
+            tegnHøyrearm();
+        } else if (antallSjanser === 1) {
+            tegnVenstrebein();
+        } else if (antallSjanser === 0) {
+            tegnHøyrebein();
+            alert("Du tapte!");
+        }
+        
+        else {
+            //I kodeordet
+            //Løper gjennom kodeordet for flere mulige tilfeller av samme bokstav
+            for (var i = 0; i < løsningsord.length; i++) {
+                //Hvis bokstav i i løsningsordet er den gjettende bokstaven
+                if(løsningsord[i] === gjettetBokstav) {
+                    // Sett inn gjettet bokstav på posisjon i (riktigeBokstaver)
+                    riktigBokstaver[i] = gjettetBokstav;
+                }
+            }
+        }
+    } else {
+        //Hvis bokstaven allerede er gjettet, gjør vi ingenting
+        alert("Bokstavn er allerede gjettet!");
+    }
+
+    //Sorterer de brukte bokstavene
+    brukteBokstaver.sort();
+
+    //Skriver ut informasjon om brukte bokstaver, riktige bokstaver og antall sjanser igjen
+    brukteBokstaverEl.innerHTML = "Brukte bokstaver: " +
+        brukteBokstaver;
+    riktigeBokstaverEl.innerHTML = "Riktige bokstaver: " +
+        riktigBokstaver;
+    sjanserIgjenEl.innerHTML = "Antall sjanser igjen: " +
+        antallSjanser;
+
+  
+    function tegnGalge() {
+        ctx.beginPath();
+        ctx.moveTo(100, 320); //Nederst til venstre
+        ctx.lineTo(100, 300); //Rett opp
+        ctx.lineTo(500, 300); //Mot høyre
+        ctx.lineTo(500, 320); //Nederst til høyre
+        ctx.moveTo(200,300); //Bunnen av "stolpen"
+        ctx.lineTo(200,20); //Til toppen av "stolpen"
+        ctx.lineTo(350, 20); //Mot høyre
+        ctx.lineTo(350,50); //Litt ned
+        ctx.lineWidth = 5;
+        ctx.stroke();
+    }
+
+    function tegnHode(){
+        ctx.beginPath();
+        ctx.arc(350, 75, 25, 0, Math.PI*2); //Sirkel med radius 25
+        ctx.stroke();
+    }
+
+    function tegnKropp(){
+        ctx.beginPath();
+        ctx.moveTo(350,100); //Toppen av kroppen
+        ctx.lineTo(350, 225); //Rett ned til bunnen av kroppen
+    }
+
+    function tegnVenstrearm() {
+        ctx.beginPath();
+        ctx.moveTo(350, 125); //Toppen av venstrearmen
+        ctx.lineTo(300, 175); //Ned til venstre til bunnen av armen
+        ctx.stroke();
+    }
+
+    function tegnHøyrearm(){
+        ctx.beginPath();
+        ctx.moveTo(350, 125); //Toppen av høyrearmen
+        ctx.lineTo(400, 175); //Ned til høyre til bunnen av armen
+    }
+
+    function tegnVenstrebein(){
+        ctx.beginPath();
+        ctx.moveTo(350, 225); //Toppen av venstrebein
+        ctx.lineTo(300, 275); //Ned til venstre til bunnen av beinet
+        ctx.stroke();
+    }
+
+    function tegnHøyrebein(){
+        ctx.beginPath();
+        ctx.moveTo(350, 225); //Toppen av høyrebein
+        ctx.linetTo(400, 275); //Ned til høyre til bunnen av beinet
+        ctx.stroke();
+    }
 </script>
 </body>
 </html>
